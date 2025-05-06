@@ -3,9 +3,9 @@ const user = {
   email: 'raymondmorgan859@gmail.com',
   password: 'raymondmorgan80!',
   name: 'Raymond Morgan',
-  age: 44,
-  address: '1200 Chase Ave, Dallas, TX 75201',
-  phone: '+1 (214) 555-0198',
+  dob: '10/02/1983',
+  phone: '+1 601 301 4011',
+  address: '3006 5th Ave, Los Angeles, CA 90018',
   balance: 3129445.66,
   transactions: [
     { date: '2025-04-18', desc: 'Direct Deposit - Employer', type: 'Credit', amount: 12000.00 },
@@ -136,13 +136,76 @@ if (window.location.pathname.endsWith('dashboard.html')) {
     div.innerHTML = chatHistory.map(c => `<div style="margin-bottom:0.3rem;color:${c.user ? '#117aca' : '#333'};">${c.user ? 'You: ' : 'Chase: '}${c.msg}</div>`).join('');
   }
 
-  // Sidebar navigation (stub)
+  // Profile Section Management
+  const profileForm = document.getElementById('profileForm');
+  const editProfileBtn = document.getElementById('editProfileBtn');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const formActions = document.querySelector('.form-actions');
+  const formInputs = profileForm.querySelectorAll('input, textarea');
+
+  // Populate profile form
+  document.getElementById('profileName').value = user.name;
+  document.getElementById('profileDob').value = user.dob;
+  document.getElementById('profilePhone').value = user.phone;
+  document.getElementById('profileEmail').value = user.email;
+  document.getElementById('profileAddress').value = user.address;
+
+  // Edit Profile Button Click
+  editProfileBtn.addEventListener('click', () => {
+    formInputs.forEach(input => input.removeAttribute('readonly'));
+    formActions.style.display = 'flex';
+    editProfileBtn.style.display = 'none';
+  });
+
+  // Cancel Edit Button Click
+  cancelEditBtn.addEventListener('click', () => {
+    formInputs.forEach(input => {
+      input.setAttribute('readonly', true);
+      // Reset values
+      input.value = user[input.name];
+    });
+    formActions.style.display = 'none';
+    editProfileBtn.style.display = 'block';
+  });
+
+  // Save Profile Changes
+  profileForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(profileForm);
+    
+    // Update user object
+    user.name = formData.get('name');
+    user.dob = formData.get('dob');
+    user.phone = formData.get('phone');
+    user.email = formData.get('email');
+    user.address = formData.get('address');
+
+    // Update welcome message
+    document.querySelector('.balance-section h2').textContent = `Welcome, ${user.name}`;
+
+    // Reset form to readonly
+    formInputs.forEach(input => input.setAttribute('readonly', true));
+    formActions.style.display = 'none';
+    editProfileBtn.style.display = 'block';
+
+    // Show success message
+    alert('Profile updated successfully!');
+  });
+
+  // Sidebar Navigation
   document.querySelectorAll('.sidebar li').forEach(li => {
-    li.onclick = function() {
+    li.addEventListener('click', function() {
+      // Update active state
       document.querySelectorAll('.sidebar li').forEach(x => x.classList.remove('active'));
       this.classList.add('active');
-      // Optionally, show/hide sections based on nav (not implemented for brevity)
-    };
+
+      // Show corresponding section
+      const sectionId = this.getAttribute('data-section');
+      document.querySelectorAll('.dashboard-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(`${sectionId}-section`).classList.add('active');
+    });
   });
 
   // Logout

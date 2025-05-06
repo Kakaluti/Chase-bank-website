@@ -354,4 +354,104 @@ body.chase-bg {
   .login-card {
     padding: 1.2rem 0.7rem;
   }
+}
+
+/* Profile Section Styles */
+.profile-container {
+  background: var(--chase-white);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(17, 122, 202, 0.06);
+  padding: 2rem 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.profile-container h2 {
+  color: var(--chase-dark-blue);
+  margin-bottom: 1.5rem;
+}
+
+.profile-card {
+  background: var(--chase-gray);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.profile-header h3 {
+  color: var(--chase-dark-blue);
+  margin: 0;
+}
+
+.profile-form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: var(--chase-dark-blue);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.8rem;
+  border: 1px solid #d0d6e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--chase-white);
+  transition: all 0.2s;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group input:read-only,
+.form-group textarea:read-only {
+  background: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--chase-blue);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(17, 122, 202, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.chase-btn.secondary {
+  background: #e0e0e0;
+  color: var(--chase-dark-blue);
+}
+
+.chase-btn.secondary:hover {
+  background: #d0d0d0;
+}
+
+/* Dashboard Section Management */
+.dashboard-section {
+  display: none;
+}
+
+.dashboard-section.active {
+  display: block;
 } 
