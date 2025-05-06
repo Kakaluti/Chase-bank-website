@@ -34,6 +34,57 @@ const user = {
   ]
 };
 
+// --- 2FA (TOTP) Setup and Verification ---
+// Lightweight TOTP and QR code generator (for demo)
+function base32encode(input) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let bits = '', output = '';
+  for (let i = 0; i < input.length; i++) bits += input[i].toString(2).padStart(8, '0');
+  for (let i = 0; i < bits.length; i += 5) {
+    const chunk = bits.substr(i, 5);
+    if (chunk.length < 5) output += alphabet[parseInt(chunk.padEnd(5, '0'), 2)];
+    else output += alphabet[parseInt(chunk, 2)];
+  }
+  return output;
+}
+function randomSecret(len = 10) {
+  let arr = new Uint8Array(len);
+  window.crypto.getRandomValues(arr);
+  return base32encode(arr);
+}
+function leftpad(str, len, pad) { str = String(str); while (str.length < len) str = pad + str; return str; }
+function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
+function hex2dec(s) { return parseInt(s, 16); }
+function base32tohex(base32) {
+  let base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", bits = "", hex = "";
+  for (let i = 0; i < base32.length; i++) {
+    let val = base32chars.indexOf(base32.charAt(i).toUpperCase());
+    bits += leftpad(val.toString(2), 5, '0');
+  }
+  for (let i = 0; i + 4 <= bits.length; i += 4) {
+    let chunk = bits.substr(i, 4);
+    hex = hex + parseInt(chunk, 2).toString(16);
+  }
+  return hex;
+}
+function getTOTP(secret) {
+  let epoch = Math.round(new Date().getTime() / 1000.0);
+  let time = leftpad(dec2hex(Math.floor(epoch / 30)), 16, '0');
+  let key = base32tohex(secret);
+  let hmacObj = new jsSHA('SHA-1', 'HEX');
+  hmacObj.setHMACKey(key, 'HEX');
+  hmacObj.update(time);
+  let hmac = hmacObj.getHMAC('HEX');
+  let offset = hex2dec(hmac.substring(hmac.length - 1));
+  let otp = (hex2dec(hmac.substr(offset * 2, 8)) & hex2dec('7fffffff')) + '';
+  otp = otp.substr(otp.length - 6, 6);
+  return otp;
+}
+// Minimal QR code generator (using Google Charts API for demo)
+function renderQRCode(data, el) {
+  el.innerHTML = `<img src="https://chart.googleapis.com/chart?cht=qr&chs=180x180&chl=${encodeURIComponent(data)}" alt="QR Code">`;
+}
+
 // --- Login Logic ---
 if (document.getElementById('loginForm')) {
   document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -41,13 +92,42 @@ if (document.getElementById('loginForm')) {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const errorDiv = document.getElementById('loginError');
-    if (email === user.email && password === user.password) {
-      localStorage.setItem('chase_logged_in', '1');
-      window.location.href = 'dashboard.html';
+    const storedPass = localStorage.getItem('chase_user_password') || user.password;
+    if (email === user.email && password === storedPass) {
+      // 2FA check
+      if (localStorage.getItem('chase_2fa_enabled') === '1') {
+        // Show 2FA prompt
+        show2FAPrompt(() => {
+          localStorage.setItem('chase_logged_in', '1');
+          recordLoginEvent();
+          window.location.href = 'dashboard.html';
+        }, errorDiv);
+      } else {
+        localStorage.setItem('chase_logged_in', '1');
+        recordLoginEvent();
+        window.location.href = 'dashboard.html';
+      }
     } else {
       errorDiv.textContent = 'Invalid email or password.';
     }
   });
+}
+
+// Record login event
+function recordLoginEvent() {
+  const now = new Date();
+  const date = now.toLocaleDateString();
+  const time = now.toLocaleTimeString();
+  // Device info
+  const device = navigator.userAgent;
+  // Simulated location/IP (for demo)
+  const location = 'Los Angeles, USA';
+  const ip = '192.0.2.' + Math.floor(Math.random() * 100 + 10); // random demo IP
+  const entry = { date, time, device, location, ip };
+  let history = JSON.parse(localStorage.getItem('chase_login_history') || '[]');
+  history.unshift(entry);
+  if (history.length > 10) history = history.slice(0, 10); // keep last 10
+  localStorage.setItem('chase_login_history', JSON.stringify(history));
 }
 
 // --- Dashboard Logic ---
@@ -142,6 +222,15 @@ if (window.location.pathname.endsWith('dashboard.html')) {
   const cancelEditBtn = document.getElementById('cancelEditBtn');
   const formActions = document.querySelector('.form-actions');
   const formInputs = profileForm.querySelectorAll('input, textarea');
+  const profilePhotoPreview = document.getElementById('profilePhotoPreview');
+  const profilePhotoInput = document.getElementById('profilePhoto');
+  const changePhotoBtn = document.getElementById('changePhotoBtn');
+
+  // Load photo from localStorage if available
+  const savedPhoto = localStorage.getItem('chase_profile_photo');
+  if (savedPhoto) {
+    profilePhotoPreview.src = savedPhoto;
+  }
 
   // Populate profile form
   document.getElementById('profileName').value = user.name;
@@ -155,39 +244,69 @@ if (window.location.pathname.endsWith('dashboard.html')) {
     formInputs.forEach(input => input.removeAttribute('readonly'));
     formActions.style.display = 'flex';
     editProfileBtn.style.display = 'none';
+    changePhotoBtn.style.display = 'inline-block';
+  });
+
+  // Change photo button
+  changePhotoBtn.addEventListener('click', () => {
+    profilePhotoInput.click();
+  });
+
+  // Preview selected photo
+  profilePhotoInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        profilePhotoPreview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   });
 
   // Cancel Edit Button Click
   cancelEditBtn.addEventListener('click', () => {
     formInputs.forEach(input => {
       input.setAttribute('readonly', true);
-      // Reset values
       input.value = user[input.name];
     });
     formActions.style.display = 'none';
     editProfileBtn.style.display = 'block';
+    changePhotoBtn.style.display = 'none';
+    // Reset photo preview
+    if (savedPhoto) {
+      profilePhotoPreview.src = savedPhoto;
+    } else {
+      profilePhotoPreview.src = 'https://ui-avatars.com/api/?name=Raymond+Morgan&background=117aca&color=fff&size=128';
+    }
   });
 
   // Save Profile Changes
   profileForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(profileForm);
-    
     // Update user object
     user.name = formData.get('name');
     user.dob = formData.get('dob');
     user.phone = formData.get('phone');
     user.email = formData.get('email');
     user.address = formData.get('address');
-
+    // Save photo if changed
+    if (profilePhotoInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        localStorage.setItem('chase_profile_photo', e.target.result);
+        profilePhotoPreview.src = e.target.result;
+      };
+      reader.readAsDataURL(profilePhotoInput.files[0]);
+    }
     // Update welcome message
     document.querySelector('.balance-section h2').textContent = `Welcome, ${user.name}`;
-
     // Reset form to readonly
     formInputs.forEach(input => input.setAttribute('readonly', true));
     formActions.style.display = 'none';
     editProfileBtn.style.display = 'block';
-
+    changePhotoBtn.style.display = 'none';
     // Show success message
     alert('Profile updated successfully!');
   });
@@ -214,6 +333,123 @@ if (window.location.pathname.endsWith('dashboard.html')) {
     localStorage.removeItem('chase_logged_in');
     window.location.href = 'index.html';
   };
+
+  // Security Section: Password Change
+  const changePasswordForm = document.getElementById('changePasswordForm');
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const current = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmNewPassword').value;
+      const msgDiv = document.getElementById('passwordChangeMsg');
+      msgDiv.textContent = '';
+      // Validate current password
+      const storedPass = localStorage.getItem('chase_user_password') || user.password;
+      if (current !== storedPass) {
+        msgDiv.textContent = 'Current password is incorrect.';
+        return;
+      }
+      // Validate new password match
+      if (newPass !== confirm) {
+        msgDiv.textContent = 'New passwords do not match.';
+        return;
+      }
+      // Validate new password length
+      if (newPass.length < 8) {
+        msgDiv.textContent = 'New password must be at least 8 characters.';
+        return;
+      }
+      // Update password
+      user.password = newPass;
+      localStorage.setItem('chase_user_password', newPass);
+      msgDiv.style.color = 'var(--chase-green)';
+      msgDiv.textContent = 'Password changed successfully!';
+      changePasswordForm.reset();
+      setTimeout(() => { msgDiv.textContent = ''; msgDiv.style.color = ''; }, 3000);
+    });
+  }
+
+  // Security Section: Login History
+  const loginHistoryTableBody = document.getElementById('loginHistoryTableBody');
+  if (loginHistoryTableBody) {
+    const history = JSON.parse(localStorage.getItem('chase_login_history') || '[]');
+    loginHistoryTableBody.innerHTML = history.map(entry => `
+      <tr>
+        <td>${entry.date}</td>
+        <td>${entry.time}</td>
+        <td>${entry.device.split(') ')[0]})</td>
+        <td>${entry.location}</td>
+        <td>${entry.ip}</td>
+      </tr>
+    `).join('');
+  }
+
+  // 2FA Setup UI Logic
+  const twofaStatus = document.getElementById('twofa-status');
+  const twofaSetup = document.getElementById('twofa-setup');
+  const twofaSecretSpan = document.getElementById('twofa-secret');
+  const twofaEnableBtn = document.getElementById('twofa-enable-btn');
+  const twofaDisableArea = document.getElementById('twofa-disable-area');
+  const twofaDisableBtn = document.getElementById('twofa-disable-btn');
+  const twofaQRCode = document.getElementById('twofa-qrcode');
+
+  function show2FAStatus() {
+    const enabled = localStorage.getItem('chase_2fa_enabled') === '1';
+    if (enabled) {
+      twofaStatus.innerHTML = '<span style="color:var(--chase-green);font-weight:600;">2FA is enabled on your account.</span>';
+      twofaSetup.style.display = 'none';
+      twofaDisableArea.style.display = 'block';
+    } else {
+      twofaStatus.innerHTML = '<span style="color:var(--chase-red);font-weight:600;">2FA is not enabled.</span>';
+      twofaSetup.style.display = 'block';
+      twofaDisableArea.style.display = 'none';
+    }
+  }
+
+  // Generate or load secret
+  let secret = localStorage.getItem('chase_2fa_secret');
+  if (!secret) {
+    secret = randomSecret(10);
+    localStorage.setItem('chase_2fa_secret', secret);
+  }
+  twofaSecretSpan.textContent = secret;
+  // otpauth URL for QR code
+  const otpauth = `otpauth://totp/Chase:RaymondMorgan?secret=${secret}&issuer=Chase`;
+  renderQRCode(otpauth, twofaQRCode);
+
+  show2FAStatus();
+
+  twofaEnableBtn.onclick = function() {
+    localStorage.setItem('chase_2fa_enabled', '1');
+    show2FAStatus();
+    alert('2FA enabled! Please use your authenticator app to get your code when logging in.');
+  };
+  twofaDisableBtn.onclick = function() {
+    localStorage.setItem('chase_2fa_enabled', '0');
+    show2FAStatus();
+    alert('2FA disabled.');
+  };
+}
+
+// 2FA Prompt
+function show2FAPrompt(onSuccess, errorDiv) {
+  let code = prompt('Enter the 6-digit code from your authenticator app:');
+  if (!code) {
+    errorDiv.textContent = '2FA code required.';
+    return;
+  }
+  const secret = localStorage.getItem('chase_2fa_secret');
+  // Use jsSHA for HMAC (must be loaded in HTML)
+  try {
+    if (getTOTP(secret) === code) {
+      onSuccess();
+    } else {
+      errorDiv.textContent = 'Invalid 2FA code.';
+    }
+  } catch {
+    errorDiv.textContent = '2FA verification error.';
+  }
 }
 
 // Transfer functionality

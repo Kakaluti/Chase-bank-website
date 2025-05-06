@@ -87,7 +87,12 @@
               <h3>Personal Details</h3>
               <button id="editProfileBtn" class="chase-btn">Edit Profile</button>
             </div>
-            <form id="profileForm" class="profile-form">
+            <form id="profileForm" class="profile-form" enctype="multipart/form-data">
+              <div class="profile-photo-group">
+                <img id="profilePhotoPreview" src="https://ui-avatars.com/api/?name=Raymond+Morgan&background=117aca&color=fff&size=128" alt="Profile Photo" class="profile-photo">
+                <input type="file" id="profilePhoto" name="photo" accept="image/*" style="display:none;">
+                <button type="button" id="changePhotoBtn" class="chase-btn secondary" style="display:none;">Change Photo</button>
+              </div>
               <div class="form-group">
                 <label for="profileName">Full Name</label>
                 <input type="text" id="profileName" name="name" readonly>
@@ -319,6 +324,67 @@
         </div>
       </section>
 
+      <!-- Security Section -->
+      <section id="security-section" class="dashboard-section">
+        <div class="security-container">
+          <h2>Security Settings</h2>
+          <div class="security-card">
+            <h3>Change Password</h3>
+            <form id="changePasswordForm" class="security-form">
+              <div class="form-group">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" name="currentPassword" required>
+              </div>
+              <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" name="newPassword" required minlength="8">
+              </div>
+              <div class="form-group">
+                <label for="confirmNewPassword">Confirm New Password</label>
+                <input type="password" id="confirmNewPassword" name="confirmNewPassword" required minlength="8">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="chase-btn">Change Password</button>
+              </div>
+              <div id="passwordChangeMsg" class="error-msg" style="margin-top:0.7rem;"></div>
+            </form>
+          </div>
+          <div class="security-card" style="margin-top:2.5rem;">
+            <h3>Login History</h3>
+            <table class="login-history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Device</th>
+                  <th>Location</th>
+                  <th>IP Address</th>
+                </tr>
+              </thead>
+              <tbody id="loginHistoryTableBody">
+                <!-- Login history will be injected by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div class="security-card" style="margin-top:2.5rem;">
+            <h3>Two-Factor Authentication (2FA)</h3>
+            <div id="twofa-setup-area">
+              <div id="twofa-status"></div>
+              <div id="twofa-setup" style="display:none;">
+                <p>Scan this QR code with your authenticator app (Google Authenticator, DUO, etc.):</p>
+                <div id="twofa-qrcode"></div>
+                <p>Or enter this secret manually: <span id="twofa-secret" style="font-family:monospace;"></span></p>
+                <button id="twofa-enable-btn" class="chase-btn">Enable 2FA</button>
+              </div>
+              <div id="twofa-disable-area" style="display:none;">
+                <p>2FA is currently <span style="color:var(--chase-green);font-weight:600;">ENABLED</span>.</p>
+                <button id="twofa-disable-btn" class="chase-btn secondary">Disable 2FA</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Widgets Section -->
       <section class="widgets-section">
         <div class="widget currency-converter">
@@ -339,6 +405,7 @@
   <footer class="chase-footer">
     <p>&copy; 2025 JPMorgan Chase & Co.</p>
   </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
   <script src="script.js"></script>
 </body>
 </html> 
