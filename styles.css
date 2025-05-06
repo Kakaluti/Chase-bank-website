@@ -454,4 +454,160 @@ body.chase-bg {
 
 .dashboard-section.active {
   display: block;
+}
+
+/* Transfer Section Styles */
+.transfer-container,
+.billpay-container,
+.deposit-container {
+  background: var(--chase-white);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(17, 122, 202, 0.06);
+  padding: 2rem 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.transfer-card,
+.billpay-card,
+.deposit-card {
+  background: var(--chase-gray);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.transfer-header,
+.billpay-header,
+.deposit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.transfer-header h3,
+.billpay-header h3,
+.deposit-header h3 {
+  color: var(--chase-dark-blue);
+  margin: 0;
+}
+
+.transfer-form,
+.billpay-form,
+.deposit-form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.amount-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 1rem;
+  color: var(--chase-dark-blue);
+  font-weight: 500;
+}
+
+.amount-input input {
+  padding-left: 2rem;
+}
+
+/* Recent Activity Tables */
+.recent-transfers,
+.scheduled-payments,
+.recent-deposits {
+  margin-top: 2rem;
+}
+
+.recent-transfers h3,
+.scheduled-payments h3,
+.recent-deposits h3 {
+  color: var(--chase-dark-blue);
+  margin-bottom: 1rem;
+}
+
+.transfers-table,
+.payments-table,
+.deposits-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.05rem;
+}
+
+.transfers-table th,
+.payments-table th,
+.deposits-table th,
+.transfers-table td,
+.payments-table td,
+.deposits-table td {
+  padding: 0.7rem 0.5rem;
+  text-align: left;
+}
+
+.transfers-table th,
+.payments-table th,
+.deposits-table th {
+  background: var(--chase-light-blue);
+  color: var(--chase-dark-blue);
+  font-weight: 600;
+}
+
+.transfers-table tr:nth-child(even),
+.payments-table tr:nth-child(even),
+.deposits-table tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.transfers-table tr:nth-child(odd),
+.payments-table tr:nth-child(odd),
+.deposits-table tr:nth-child(odd) {
+  background: var(--chase-white);
+}
+
+/* Upload Area Styles */
+.upload-area {
+  border: 2px dashed #d0d6e1;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-area:hover {
+  border-color: var(--chase-blue);
+  background: rgba(17, 122, 202, 0.05);
+}
+
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+}
+
+.upload-icon {
+  font-size: 2rem;
+}
+
+/* Status Colors */
+.status-completed {
+  color: var(--chase-green);
+}
+
+.status-pending {
+  color: #f39c12;
+}
+
+.status-failed {
+  color: var(--chase-red);
 } 

@@ -116,6 +116,224 @@
           </div>
         </div>
       </section>
+
+      <!-- Transfer Section -->
+      <section id="transfers-section" class="dashboard-section">
+        <div class="transfer-container">
+          <h2>Transfer Money</h2>
+          <div class="transfer-card">
+            <div class="transfer-header">
+              <h3>Make a Transfer</h3>
+            </div>
+            <form id="transferForm" class="transfer-form">
+              <div class="form-group">
+                <label for="fromAccount">From Account</label>
+                <select id="fromAccount" name="fromAccount" required>
+                  <option value="checking">Chase Checking (****1234)</option>
+                  <option value="savings">Chase Savings (****5678)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="toAccount">To Account</label>
+                <select id="toAccount" name="toAccount" required>
+                  <option value="savings">Chase Savings (****5678)</option>
+                  <option value="checking">Chase Checking (****1234)</option>
+                  <option value="external">External Account</option>
+                </select>
+              </div>
+              <div class="form-group" id="externalAccountGroup" style="display: none;">
+                <label for="externalAccount">External Account Details</label>
+                <input type="text" id="externalAccount" name="externalAccount" placeholder="Account Number">
+                <input type="text" id="routingNumber" name="routingNumber" placeholder="Routing Number">
+                <input type="text" id="bankName" name="bankName" placeholder="Bank Name">
+              </div>
+              <div class="form-group">
+                <label for="transferAmount">Amount</label>
+                <div class="amount-input">
+                  <span class="currency-symbol">$</span>
+                  <input type="number" id="transferAmount" name="amount" min="0.01" step="0.01" required placeholder="0.00">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="transferDate">Transfer Date</label>
+                <input type="date" id="transferDate" name="date" required>
+              </div>
+              <div class="form-group">
+                <label for="transferNote">Note (Optional)</label>
+                <input type="text" id="transferNote" name="note" placeholder="Add a note">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="chase-btn">Complete Transfer</button>
+                <button type="button" id="cancelTransferBtn" class="chase-btn secondary">Cancel</button>
+              </div>
+            </form>
+          </div>
+          <div class="recent-transfers">
+            <h3>Recent Transfers</h3>
+            <table class="transfers-table" id="transfersTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Transfers will be injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bill Pay Section -->
+      <section id="billpay-section" class="dashboard-section">
+        <div class="billpay-container">
+          <h2>Pay Bills</h2>
+          <div class="billpay-card">
+            <div class="billpay-header">
+              <h3>Schedule a Payment</h3>
+            </div>
+            <form id="billpayForm" class="billpay-form">
+              <div class="form-group">
+                <label for="payeeName">Payee Name</label>
+                <input type="text" id="payeeName" name="payeeName" required placeholder="Enter payee name">
+              </div>
+              <div class="form-group">
+                <label for="accountNumber">Account Number</label>
+                <input type="text" id="accountNumber" name="accountNumber" required placeholder="Enter account number">
+              </div>
+              <div class="form-group">
+                <label for="paymentAmount">Amount</label>
+                <div class="amount-input">
+                  <span class="currency-symbol">$</span>
+                  <input type="number" id="paymentAmount" name="amount" min="0.01" step="0.01" required placeholder="0.00">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="paymentDate">Payment Date</label>
+                <input type="date" id="paymentDate" name="date" required>
+              </div>
+              <div class="form-group">
+                <label for="paymentFrequency">Payment Frequency</label>
+                <select id="paymentFrequency" name="frequency" required>
+                  <option value="once">One-time</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="biweekly">Bi-weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="chase-btn">Schedule Payment</button>
+                <button type="button" id="cancelBillpayBtn" class="chase-btn secondary">Cancel</button>
+              </div>
+            </form>
+          </div>
+          <div class="scheduled-payments">
+            <h3>Scheduled Payments</h3>
+            <table class="payments-table" id="paymentsTable">
+              <thead>
+                <tr>
+                  <th>Payee</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Frequency</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Payments will be injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Deposit Section -->
+      <section id="deposit-section" class="dashboard-section">
+        <div class="deposit-container">
+          <h2>Mobile Deposit</h2>
+          <div class="deposit-card">
+            <div class="deposit-header">
+              <h3>Deposit a Check</h3>
+            </div>
+            <form id="depositForm" class="deposit-form">
+              <div class="form-group">
+                <label for="depositAccount">Deposit To</label>
+                <select id="depositAccount" name="account" required>
+                  <option value="checking">Chase Checking (****1234)</option>
+                  <option value="savings">Chase Savings (****5678)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="checkAmount">Check Amount</label>
+                <div class="amount-input">
+                  <span class="currency-symbol">$</span>
+                  <input type="number" id="checkAmount" name="amount" min="0.01" step="0.01" required placeholder="0.00">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="checkFront">Front of Check</label>
+                <div class="upload-area" id="frontUpload">
+                  <input type="file" id="checkFront" name="front" accept="image/*" required>
+                  <div class="upload-placeholder">
+                    <i class="upload-icon">📷</i>
+                    <span>Take Photo or Upload</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="checkBack">Back of Check</label>
+                <div class="upload-area" id="backUpload">
+                  <input type="file" id="checkBack" name="back" accept="image/*" required>
+                  <div class="upload-placeholder">
+                    <i class="upload-icon">📷</i>
+                    <span>Take Photo or Upload</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="chase-btn">Submit Deposit</button>
+                <button type="button" id="cancelDepositBtn" class="chase-btn secondary">Cancel</button>
+              </div>
+            </form>
+          </div>
+          <div class="recent-deposits">
+            <h3>Recent Deposits</h3>
+            <table class="deposits-table" id="depositsTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Account</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Deposits will be injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Widgets Section -->
+      <section class="widgets-section">
+        <div class="widget currency-converter">
+          <h4>Currency Converter</h4>
+          <div id="currencyWidget"></div>
+        </div>
+        <div class="widget notifications-widget">
+          <h4>Notifications</h4>
+          <ul id="notificationsList"></ul>
+        </div>
+        <div class="widget live-chat-widget">
+          <h4>Live Chat</h4>
+          <div id="chatWidget"></div>
+        </div>
+      </section>
     </main>
   </div>
   <footer class="chase-footer">

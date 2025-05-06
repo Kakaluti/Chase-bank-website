@@ -214,4 +214,167 @@ if (window.location.pathname.endsWith('dashboard.html')) {
     localStorage.removeItem('chase_logged_in');
     window.location.href = 'index.html';
   };
-} 
+}
+
+// Transfer functionality
+function handleTransfer(event) {
+    event.preventDefault();
+    const fromAccount = document.getElementById('fromAccount').value;
+    const toAccount = document.getElementById('toAccount').value;
+    const amount = parseFloat(document.getElementById('transferAmount').value);
+    const note = document.getElementById('transferNote').value;
+
+    if (fromAccount === toAccount) {
+        showNotification('Cannot transfer to the same account', 'error');
+        return;
+    }
+
+    if (amount <= 0) {
+        showNotification('Please enter a valid amount', 'error');
+        return;
+    }
+
+    // Add to recent transfers
+    const transfersTable = document.querySelector('.transfers-table tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${new Date().toLocaleDateString()}</td>
+        <td>${fromAccount}</td>
+        <td>${toAccount}</td>
+        <td>$${amount.toFixed(2)}</td>
+        <td>${note || '-'}</td>
+        <td class="status-pending">Pending</td>
+    `;
+    transfersTable.insertBefore(newRow, transfersTable.firstChild);
+
+    // Update balance
+    updateBalance(fromAccount, -amount);
+    updateBalance(toAccount, amount);
+
+    showNotification('Transfer initiated successfully', 'success');
+    event.target.reset();
+}
+
+// Bill Pay functionality
+function handleBillPay(event) {
+    event.preventDefault();
+    const payeeName = document.getElementById('payeeName').value;
+    const accountNumber = document.getElementById('accountNumber').value;
+    const amount = parseFloat(document.getElementById('paymentAmount').value);
+    const paymentDate = document.getElementById('paymentDate').value;
+    const frequency = document.getElementById('paymentFrequency').value;
+
+    if (amount <= 0) {
+        showNotification('Please enter a valid amount', 'error');
+        return;
+    }
+
+    // Add to scheduled payments
+    const paymentsTable = document.querySelector('.payments-table tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${payeeName}</td>
+        <td>${accountNumber}</td>
+        <td>$${amount.toFixed(2)}</td>
+        <td>${paymentDate}</td>
+        <td>${frequency}</td>
+        <td class="status-pending">Scheduled</td>
+    `;
+    paymentsTable.insertBefore(newRow, paymentsTable.firstChild);
+
+    showNotification('Payment scheduled successfully', 'success');
+    event.target.reset();
+}
+
+// Deposit functionality
+function handleDeposit(event) {
+    event.preventDefault();
+    const account = document.getElementById('depositAccount').value;
+    const amount = parseFloat(document.getElementById('checkAmount').value);
+    const frontImage = document.getElementById('checkFront').files[0];
+    const backImage = document.getElementById('checkBack').files[0];
+
+    if (!frontImage || !backImage) {
+        showNotification('Please upload both sides of the check', 'error');
+        return;
+    }
+
+    if (amount <= 0) {
+        showNotification('Please enter a valid amount', 'error');
+        return;
+    }
+
+    // Add to recent deposits
+    const depositsTable = document.querySelector('.deposits-table tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${new Date().toLocaleDateString()}</td>
+        <td>${account}</td>
+        <td>$${amount.toFixed(2)}</td>
+        <td class="status-pending">Processing</td>
+    `;
+    depositsTable.insertBefore(newRow, depositsTable.firstChild);
+
+    // Update balance after processing
+    setTimeout(() => {
+        updateBalance(account, amount);
+        newRow.querySelector('td:last-child').className = 'status-completed';
+        newRow.querySelector('td:last-child').textContent = 'Completed';
+        showNotification('Deposit processed successfully', 'success');
+    }, 2000);
+
+    event.target.reset();
+}
+
+// Helper function to update account balance
+function updateBalance(account, amount) {
+    const balanceElement = document.querySelector(`[data-account="${account}"] .account-balance`);
+    if (balanceElement) {
+        const currentBalance = parseFloat(balanceElement.textContent.replace(/[^0-9.-]+/g, ''));
+        const newBalance = currentBalance + amount;
+        balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+    }
+}
+
+// File upload preview
+function handleFileUpload(input, previewId) {
+    const preview = document.getElementById(previewId);
+    const file = input.files[0];
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// Add event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const transferForm = document.getElementById('transferForm');
+    const billPayForm = document.getElementById('billPayForm');
+    const depositForm = document.getElementById('depositForm');
+
+    if (transferForm) {
+        transferForm.addEventListener('submit', handleTransfer);
+    }
+    if (billPayForm) {
+        billPayForm.addEventListener('submit', handleBillPay);
+    }
+    if (depositForm) {
+        depositForm.addEventListener('submit', handleDeposit);
+    }
+
+    // File upload preview handlers
+    const checkFront = document.getElementById('checkFront');
+    const checkBack = document.getElementById('checkBack');
+
+    if (checkFront) {
+        checkFront.addEventListener('change', () => handleFileUpload(checkFront, 'frontPreview'));
+    }
+    if (checkBack) {
+        checkBack.addEventListener('change', () => handleFileUpload(checkBack, 'backPreview'));
+    }
+}); 
