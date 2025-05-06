@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chase Bank - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="https://www.chase.com/etc/designs/chase-ux/favicon.ico">
+</head>
+<body class="chase-bg">
+  <header class="chase-header dashboard-header">
+    <img src="https://1000logos.net/wp-content/uploads/2017/06/Chase-logo.png" alt="Chase Logo" class="chase-logo">
+    <nav>
+      <a href="#">Accounts</a>
+      <a href="#">Transfers</a>
+      <a href="#">Bill Pay</a>
+      <a href="#">Deposit</a>
+      <a href="#">Profile</a>
+      <a href="#">Security</a>
+      <a href="#">Notifications</a>
+      <a href="#">Support</a>
+      <a href="index.html" class="logout-link">Logout</a>
+    </nav>
+  </header>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <ul>
+        <li class="active">Accounts</li>
+        <li>Transfers</li>
+        <li>Bill Pay</li>
+        <li>Deposit</li>
+        <li>Profile</li>
+        <li>Security</li>
+        <li>Notifications</li>
+        <li>Support</li>
+      </ul>
+    </aside>
+    <main class="dashboard-main">
+      <section class="balance-section">
+        <h2>Welcome, Raymond Morgan</h2>
+        <div class="balance-card">
+          <span>Current Balance</span>
+          <h1 id="balance">$3,129,445.66</h1>
+        </div>
+      </section>
+      <section class="transactions-section">
+        <h3>Recent Transactions</h3>
+        <table class="transactions-table" id="transactionsTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Transactions will be injected by JS -->
+          </tbody>
+        </table>
+      </section>
+      <section class="widgets-section">
+        <div class="widget currency-converter">
+          <h4>Currency Converter</h4>
+          <div id="currencyWidget"></div>
+        </div>
+        <div class="widget notifications-widget">
+          <h4>Notifications</h4>
+          <ul id="notificationsList"></ul>
+        </div>
+        <div class="widget live-chat-widget">
+          <h4>Live Chat</h4>
+          <div id="chatWidget"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <footer class="chase-footer">
+    <p>&copy; 2025 JPMorgan Chase & Co.</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html> 
