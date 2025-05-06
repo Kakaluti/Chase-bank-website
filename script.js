@@ -430,6 +430,83 @@ if (window.location.pathname.endsWith('dashboard.html')) {
     show2FAStatus();
     alert('2FA disabled.');
   };
+
+  // Support Form Submission
+  const supportForm = document.getElementById('supportForm');
+  const supportFormMsg = document.getElementById('supportFormMsg');
+  const supportTicketsTableBody = document.getElementById('supportTicketsTableBody');
+  if (supportForm) {
+    supportForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('supportName').value.trim();
+      const email = document.getElementById('supportEmail').value.trim();
+      const subject = document.getElementById('supportSubject').value.trim();
+      const message = document.getElementById('supportMessage').value.trim();
+      const fileInput = document.getElementById('supportFile');
+      let fileName = '';
+      if (fileInput.files[0]) fileName = fileInput.files[0].name;
+      if (!name || !email || !subject || !message) {
+        supportFormMsg.textContent = 'Please fill in all required fields.';
+        return;
+      }
+      // Store ticket in localStorage
+      let tickets = JSON.parse(localStorage.getItem('chase_support_tickets') || '[]');
+      tickets.unshift({
+        date: new Date().toLocaleDateString(),
+        subject,
+        status: 'Open',
+        name,
+        email,
+        message,
+        file: fileName
+      });
+      if (tickets.length > 10) tickets = tickets.slice(0, 10);
+      localStorage.setItem('chase_support_tickets', JSON.stringify(tickets));
+      supportForm.reset();
+      supportFormMsg.style.color = 'var(--chase-green)';
+      supportFormMsg.textContent = 'Support request submitted! Our team will contact you soon.';
+      renderSupportTickets();
+      setTimeout(() => { supportFormMsg.textContent = ''; supportFormMsg.style.color = ''; }, 3000);
+    });
+  }
+  function renderSupportTickets() {
+    if (!supportTicketsTableBody) return;
+    const tickets = JSON.parse(localStorage.getItem('chase_support_tickets') || '[]');
+    supportTicketsTableBody.innerHTML = tickets.map(t => `
+      <tr>
+        <td>${t.date}</td>
+        <td>${t.subject}</td>
+        <td>${t.status}</td>
+      </tr>
+    `).join('');
+  }
+  renderSupportTickets();
+  // Support Live Chat
+  const supportChatWidget = document.getElementById('supportChatWidget');
+  if (supportChatWidget) {
+    supportChatWidget.innerHTML = `
+      <div style="color:#888;">Live chat is available 24/7.<br>How can we help you?</div>
+      <input type="text" id="supportChatInput" placeholder="Type your message..." style="width:90%;margin-top:0.5rem;">
+      <button id="supportChatSendBtn" style="margin-top:0.5rem;">Send</button>
+      <div id="supportChatHistory" style="margin-top:0.7rem;"></div>
+    `;
+    let supportChatHistory = JSON.parse(localStorage.getItem('chase_support_chat') || '[]');
+    document.getElementById('supportChatSendBtn').onclick = function() {
+      const input = document.getElementById('supportChatInput');
+      if (input.value.trim()) {
+        supportChatHistory.push({user: true, msg: input.value});
+        supportChatHistory.push({user: false, msg: 'Thank you for contacting support. A representative will be with you shortly.'});
+        localStorage.setItem('chase_support_chat', JSON.stringify(supportChatHistory));
+        renderSupportChat();
+        input.value = '';
+      }
+    };
+    function renderSupportChat() {
+      const div = document.getElementById('supportChatHistory');
+      div.innerHTML = supportChatHistory.map(c => `<div style="margin-bottom:0.3rem;color:${c.user ? '#117aca' : '#333'};">${c.user ? 'You: ' : 'Support: '}${c.msg}</div>`).join('');
+    }
+    renderSupportChat();
+  }
 }
 
 // 2FA Prompt

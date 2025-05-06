@@ -697,4 +697,124 @@ body.chase-bg {
 }
 .login-history-table td {
   color: #333;
+}
+
+/* Support Section Styles */
+.support-container {
+  background: var(--chase-white);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(17, 122, 202, 0.06);
+  padding: 2rem 2.5rem;
+  margin-bottom: 2rem;
+}
+.support-flex {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.support-main {
+  flex: 2 1 400px;
+  min-width: 340px;
+}
+.support-side {
+  flex: 1 1 260px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.support-card {
+  background: var(--chase-gray);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 6px rgba(17, 122, 202, 0.04);
+}
+.support-card h3 {
+  color: var(--chase-dark-blue);
+  margin-bottom: 1.2rem;
+}
+.support-form .form-group {
+  margin-bottom: 1.1rem;
+}
+.support-form input,
+.support-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #d0d6e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--chase-white);
+  transition: border 0.2s;
+}
+.support-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.support-form input:focus,
+.support-form textarea:focus {
+  border-color: var(--chase-blue);
+  outline: none;
+}
+.support-form .form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.support-tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.05rem;
+}
+.support-tickets-table th, .support-tickets-table td {
+  padding: 0.7rem 0.5rem;
+  text-align: left;
+}
+.support-tickets-table th {
+  background: var(--chase-light-blue);
+  color: var(--chase-dark-blue);
+  font-weight: 600;
+}
+.support-tickets-table tr:nth-child(even) {
+  background: #f8fafc;
+}
+.support-tickets-table tr:nth-child(odd) {
+  background: var(--chase-white);
+}
+.support-tickets-table td {
+  color: #333;
+}
+.faq-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.faq-card li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+  font-size: 1rem;
+}
+.faq-card li:last-child {
+  border-bottom: none;
+}
+.live-chat-card {
+  margin-top: 2rem;
+}
+#supportChatWidget {
+  min-height: 80px;
+  background: var(--chase-gray);
+  border-radius: 8px;
+  padding: 0.7rem;
+  font-size: 1rem;
+  color: #333;
+}
+@media (max-width: 900px) {
+  .support-flex {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .support-main, .support-side {
+    min-width: 0;
+  }
 } 

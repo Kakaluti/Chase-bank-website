@@ -385,6 +385,77 @@
         </div>
       </section>
 
+      <!-- Support Section -->
+      <section id="support-section" class="dashboard-section">
+        <div class="support-container">
+          <h2>Support Center</h2>
+          <div class="support-flex">
+            <div class="support-main">
+              <div class="support-card">
+                <h3>Contact Support</h3>
+                <form id="supportForm" class="support-form" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="supportName">Name</label>
+                    <input type="text" id="supportName" name="name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="supportEmail">Email</label>
+                    <input type="email" id="supportEmail" name="email" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="supportSubject">Subject</label>
+                    <input type="text" id="supportSubject" name="subject" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="supportMessage">Message</label>
+                    <textarea id="supportMessage" name="message" required></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="supportFile">Attach Document (optional)</label>
+                    <input type="file" id="supportFile" name="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                  </div>
+                  <div class="form-actions">
+                    <button type="submit" class="chase-btn">Submit Request</button>
+                  </div>
+                  <div id="supportFormMsg" class="error-msg" style="margin-top:0.7rem;"></div>
+                </form>
+              </div>
+              <div class="support-card" style="margin-top:2rem;">
+                <h3>Your Support Tickets</h3>
+                <table class="support-tickets-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Subject</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="supportTicketsTableBody">
+                    <!-- Tickets will be injected by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="support-side">
+              <div class="support-card faq-card">
+                <h3>Frequently Asked Questions</h3>
+                <ul class="faq-list">
+                  <li><strong>How do I reset my password?</strong><br>Go to Security &gt; Change Password.</li>
+                  <li><strong>How do I enable 2FA?</strong><br>Go to Security &gt; Two-Factor Authentication.</li>
+                  <li><strong>How do I contact support?</strong><br>Use the contact form on this page or start a live chat.</li>
+                  <li><strong>How do I upload documents?</strong><br>Attach files in the support form above.</li>
+                  <li><strong>How do I view my login history?</strong><br>Go to Security &gt; Login History.</li>
+                </ul>
+              </div>
+              <div class="support-card live-chat-card">
+                <h3>Live Chat</h3>
+                <div id="supportChatWidget"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Widgets Section -->
       <section class="widgets-section">
         <div class="widget currency-converter">
