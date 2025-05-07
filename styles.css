@@ -848,4 +848,23 @@ body.chase-bg {
   .support-main, .support-side {
     min-width: 0;
   }
+}
+
+/* International Transfer Fields */
+#internationalFields label {
+  margin-top: 0.5rem;
+}
+#internationalFields input[readonly] {
+  background: #f8f9fa;
+  color: #555;
+  border: 1px solid #d0d6e1;
+}
+.transfers-table th, .transfers-table td {
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .transfers-table th, .transfers-table td {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.2rem;
+  }
 } 

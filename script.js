@@ -1,7 +1,7 @@
 // --- User Data ---
 const user = {
   email: 'raymondmorgan859@gmail.com',
-  password: 'raymondmorgan80!',
+  password: 'raymondmorgan859',
   name: 'Raymond Morgan',
   dob: '10/02/1983',
   phone: '+1 601 301 4011',
@@ -529,43 +529,91 @@ function show2FAPrompt(onSuccess, errorDiv) {
   }
 }
 
-// Transfer functionality
+// --- International Transfer Logic ---
+const transferType = document.getElementById('transferType');
+const internationalFields = document.getElementById('internationalFields');
+const recipientCountry = document.getElementById('recipientCountry');
+const foreignCurrency = document.getElementById('foreignCurrency');
+const exchangeRateInput = document.getElementById('exchangeRate');
+const currencyMap = {
+  GB: { currency: 'GBP', rate: 0.8 },
+  EU: { currency: 'EUR', rate: 0.93 },
+  JP: { currency: 'JPY', rate: 155.2 },
+  CA: { currency: 'CAD', rate: 1.36 },
+  NG: { currency: 'NGN', rate: 1450 },
+  IN: { currency: 'INR', rate: 83.5 },
+  CN: { currency: 'CNY', rate: 7.2 },
+  MX: { currency: 'MXN', rate: 17.1 }
+};
+if (transferType) {
+  transferType.addEventListener('change', function() {
+    if (this.value === 'international') {
+      internationalFields.style.display = 'block';
+      setInternationalFields();
+    } else {
+      internationalFields.style.display = 'none';
+    }
+  });
+}
+if (recipientCountry) {
+  recipientCountry.addEventListener('change', setInternationalFields);
+}
+function setInternationalFields() {
+  const val = recipientCountry.value;
+  if (currencyMap[val]) {
+    foreignCurrency.value = currencyMap[val].currency;
+    exchangeRateInput.value = `1 USD = ${currencyMap[val].rate} ${currencyMap[val].currency}`;
+  } else {
+    foreignCurrency.value = '';
+    exchangeRateInput.value = '';
+  }
+}
+// Set initial values
+if (transferType && transferType.value === 'international') setInternationalFields();
+
+// --- Update Transfer Submission ---
 function handleTransfer(event) {
-    event.preventDefault();
-    const fromAccount = document.getElementById('fromAccount').value;
-    const toAccount = document.getElementById('toAccount').value;
-    const amount = parseFloat(document.getElementById('transferAmount').value);
-    const note = document.getElementById('transferNote').value;
-
-    if (fromAccount === toAccount) {
-        showNotification('Cannot transfer to the same account', 'error');
-        return;
-    }
-
-    if (amount <= 0) {
-        showNotification('Please enter a valid amount', 'error');
-        return;
-    }
-
-    // Add to recent transfers
-    const transfersTable = document.querySelector('.transfers-table tbody');
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td>${new Date().toLocaleDateString()}</td>
-        <td>${fromAccount}</td>
-        <td>${toAccount}</td>
-        <td>$${amount.toFixed(2)}</td>
-        <td>${note || '-'}</td>
-        <td class="status-pending">Pending</td>
-    `;
-    transfersTable.insertBefore(newRow, transfersTable.firstChild);
-
-    // Update balance
-    updateBalance(fromAccount, -amount);
-    updateBalance(toAccount, amount);
-
-    showNotification('Transfer initiated successfully', 'success');
-    event.target.reset();
+  event.preventDefault();
+  const type = transferType.value;
+  const fromAccount = document.getElementById('fromAccount').value;
+  const toAccount = document.getElementById('toAccount').value;
+  const amount = parseFloat(document.getElementById('transferAmount').value);
+  const note = document.getElementById('transferNote').value;
+  let currency = 'USD';
+  let rate = '';
+  let country = '';
+  if (type === 'international') {
+    country = recipientCountry.options[recipientCountry.selectedIndex].text;
+    currency = foreignCurrency.value;
+    rate = exchangeRateInput.value;
+  }
+  if (fromAccount === toAccount && type === 'domestic') {
+    showNotification('Cannot transfer to the same account', 'error');
+    return;
+  }
+  if (amount <= 0) {
+    showNotification('Please enter a valid amount', 'error');
+    return;
+  }
+  // Add to recent transfers
+  const transfersTable = document.querySelector('.transfers-table tbody');
+  const newRow = document.createElement('tr');
+  newRow.innerHTML = `
+    <td>${new Date().toLocaleDateString()}</td>
+    <td>${type === 'international' ? 'International' : 'Domestic'}</td>
+    <td>${fromAccount}</td>
+    <td>${type === 'international' ? country : toAccount}</td>
+    <td>$${amount.toFixed(2)}</td>
+    <td>${currency}</td>
+    <td>${rate}</td>
+    <td class="status-pending">Pending</td>
+  `;
+  transfersTable.insertBefore(newRow, transfersTable.firstChild);
+  // Update balance
+  updateBalance(fromAccount, -amount);
+  showNotification('Transfer initiated successfully', 'success');
+  event.target.reset();
+  internationalFields.style.display = 'none';
 }
 
 // Bill Pay functionality
